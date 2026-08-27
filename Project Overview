@@ -6,7 +6,7 @@ Main --- Objects + map design
 
 Map  - 2d grid with each cell state as empty , food , pheromon trail or wall
 
-Interfaces & Abstractions for Methods n functions  inside the main 
+Interfaces & Abstractions for Methods n functions  as separate files 
 
 Superclass Ant. Common variables  : Health , Stamina , Alive 
 
