@@ -1,10 +1,27 @@
 
      class Scout extends Ant { 
         boolean pathfinding;
+
+        public Scount(int health , int stamina) {
+            super(health, stamina);
+        }
+
+        public void setPathfinding(boolean pathfinding) {
+            this.isPathfinding = pathfinding;
+        }
+
+        public boolean isPathfinding() {
+            return isPathfinding;
+        }
+
+        public void leavePheromone(Point position) {
+            // add pheromon to the map at the position
+        }
     
-        void pathfinding(boolean pathfinding) { this.pathfinding = pathfinding; }
-        boolean pathfinding() { return pathfinding; }
-    
+        public Point findFood(Point currentPosition) {
+            // this is for the pathfinding logic
+            return null;
+        }
     } 
 
     
