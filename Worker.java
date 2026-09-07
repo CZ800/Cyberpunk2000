@@ -3,6 +3,65 @@ class Worker extends Ant{
     2. Follow the strongest pheromone trail
     3. Pick up food when it reaches the source
     4. Carry food back to colony  */
+    boolean followingTrail;
+    boolean carryingFood;
+    int foodCarried;
+
+    /*The following refers to list of pheromones where strength is measured as a Float .
+    So each pheromone in the trail has a position and a float strength value like 0.8f
+    */
+    
+    List<Pheromone<Float>> trail = new ArrayList<>();
+    
+
+    public Worker (int health, int stamina) {
+       super(health,stamina);
+       this.followingTrail = false;
+       this.carryingFood = false;
+       this.foodCarried = 0 ;
+    }
+
+    public void setFollowingTrail(boolean followingTrail) {
+        this.followingTrail = followingTrail;
+    }
+
+    public boolean isFollowingTrail() { return followingTrail;}
+
+    public void setCarryingFood(boolean carryingFood) {
+        this.carryingFood = carryingFood;
+    }
+
+    public boolean isCarryingFood () { return carryingFood;} 
+
+    public int getFoodCarried() { return foodCarried; }
+
+    public void pickUpFood(int amount) {
+        this.foodCarried = amount;
+        this.carryingFood = true;
+    }
+
+
+    //Connecting to the generics Pheromone<T>
+    //Worker checks which pheromone in the list is the strongest
+    //and moves towards it .
+
+    public void followTrail(){
+
+    Pheromone<Float> strongest = null;
+    for (Pheromone<Float> p : trail) {
+        if (strongest == null || p.getStrength() > strongest.getStrength()) {
+            strongest = p;
+        }
+    }
+
+    if(strongest != null) {
+        move(strongest.getPosition());
+    }
+
+}
+
+
+
 }
 
 
