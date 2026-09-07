@@ -2,7 +2,7 @@
      class Scout extends Ant { 
         boolean pathfinding;
 
-        public Scount(int health , int stamina) {
+        public Scout(int health , int stamina) {
             super(health, stamina);
         }
 
