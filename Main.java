@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Random;
 import javax.swing.*;
 
 
@@ -7,6 +8,8 @@ public class Main {
     static final int WIDTH = 20;
     static final int HEIGHT = 20;
     static final int CELL_SIZE = 30;
+    static final int TOTAL_FOOD = 10;
+
 
 
     enum CellType {
@@ -17,6 +20,8 @@ public class Main {
     static Pheromone<Float>[][] pheromoneGrid = new Pheromone[WIDTH][HEIGHT];
 
     public static void main(String[] args) {
+        
+        initGrid();
         JFrame frame = new JFrame("Ant Colony");
         JPanel panel = new JPanel() {
             @Override 
@@ -50,6 +55,32 @@ public class Main {
                 //drawing the grid lines
                 g.setColor(Color.DARK_GRAY);
                 g.drawRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        }
+    }
+ }
+
+ static void initGrid () {
+    // set every cell to Empty 
+    // place COLONY in the middle 
+    // scatter food around the map
+
+    for (int x = 0; x < WIDTH; x++) {
+        for (int y = 0; y < HEIGHT; y++) {
+            grid[x][y] = CellType.EMPTY;
+        }
+    }
+    //place colony in the middle
+    grid[WIDTH / 2][HEIGHT / 2] = CellType.COLONY;
+
+    // scatter food 
+    Random random = new Random();
+    int foodPlaced = 0;
+    while (foodPlaced < 10){
+        int x = random.nextInt(WIDTH);
+        int y = random.nextInt(HEIGHT);
+        if (grid[x][y] == CellType.EMPTY) {
+            grid[x][y] = CellType.FOOD;
+            foodPlaced++;
         }
     }
  }
