@@ -9,13 +9,45 @@ public class Main {
     static final int HEIGHT = 20;
     static final int CELL_SIZE = 30;
     static final int TOTAL_FOOD = 10;
-
+    static int respawnTimer = 0 ;
+    static final int RESPAWN_RATE = 50;// so every 50 ticks
 
 
     enum CellType {
         EMPTY , FOOD , WALL , COLONY
     }
+
+
+   ///  Timer for food respawn
+
+   static void update() {
+        respawnTimer++;
+        if (respawnTimer >= RESPAWN_RATE){
+            respawnFood();
+          respawnTimer = 0 ;
+        }
+    }
+
     
+
+    static Random random = new Random() ;
+
+    static void respawnFood() { 
+    int foodPlaced = 0;
+    while (foodPlaced < 3){
+        int x = random.nextInt(WIDTH);
+        int y = random.nextInt(HEIGHT);
+        if (grid[x][y] == CellType.EMPTY) {
+            grid[x][y] = CellType.FOOD;
+            foodPlaced++;
+        
+            }
+
+        }
+    }
+
+
+
     static CellType[][] grid = new CellType[WIDTH][HEIGHT];
     static Pheromone<Float>[][] pheromoneGrid = new Pheromone[WIDTH][HEIGHT];
 
@@ -23,6 +55,7 @@ public class Main {
         
         initGrid();
         JFrame frame = new JFrame("Ant Colony");
+
         JPanel panel = new JPanel() {
             @Override 
             protected void paintComponent(Graphics g) {
@@ -31,14 +64,21 @@ public class Main {
         };
 
 
+    
+
         panel.setPreferredSize(new Dimension(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE));
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
 
-        Timer timer = new Timer(100, e -> panel.repaint());
-        timer.start();
-    }
+        Timer timer = new Timer(100, e -> {
+            update();
+            panel.repaint();
+    });
+            timer.start();
+}
+
+    
 
     static void drawGrid(Graphics g) {
         for (int x = 0; x < WIDTH; x++){
