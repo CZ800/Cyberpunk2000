@@ -28,11 +28,24 @@ public class Main {
         }
     }
 
+
+
+    static int countFood() {
+        int count = 0;
+        for (int x = 0; x < WIDTH ; x++) {
+            for (int y = 0 ; y < HEIGHT; y++) {
+                if (grid[x][y] == CellType.FOOD) count++ ;
+            }
+        }
+        return count;
+    }
     
 
     static Random random = new Random() ;
 
     static void respawnFood() { 
+        if (countFood() >= TOTAL_FOOD) return; // stop food from spawning if it exceeds counter
+
     int foodPlaced = 0;
     while (foodPlaced < 3){
         int x = random.nextInt(WIDTH);
