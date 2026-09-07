@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javax.swing.*;
 
@@ -13,8 +15,14 @@ public class Main {
     static final int RESPAWN_RATE = 50;// so every 50 ticks
 
 
+    static Queen queen;
+    static List<Scout> scouts = new ArrayList<>();
+    static List<Worker> workers = new ArrayList<>();
+
+
+
     enum CellType {
-        EMPTY , FOOD , WALL , COLONY
+        EMPTY , FOOD , WALL , COLONY , QUEEN
     }
 
 
@@ -76,6 +84,8 @@ public class Main {
             }
         };
 
+        
+
 
     
 
@@ -100,8 +110,10 @@ public class Main {
                     case EMPTY:     g.setColor(Color.BLACK); break;
                     case FOOD:      g.setColor(Color.YELLOW); break;
                     case WALL:      g.setColor(Color.RED);  break;
-                    case COLONY:    g.setColor(Color.MAGENTA);  break;
+                    //case COLONY:    g.setColor(Color.MAGENTA);  break;
+                    case QUEEN:     g.setColor(Color.PINK); break;
                     default:        g.setColor(Color.BLACK);    break;
+                    
                 }
                 g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
@@ -116,14 +128,22 @@ public class Main {
     // set every cell to Empty 
     // place COLONY in the middle 
     // scatter food around the map
+    // place Queen
 
     for (int x = 0; x < WIDTH; x++) {
         for (int y = 0; y < HEIGHT; y++) {
             grid[x][y] = CellType.EMPTY;
         }
     }
+// Spawn Queen
+      queen = new Queen(100,100);
+    grid[WIDTH / 2][HEIGHT / 2] = CellType.QUEEN;
+
     //place colony in the middle
-    grid[WIDTH / 2][HEIGHT / 2] = CellType.COLONY;
+   // grid[WIDTH / 2][HEIGHT / 2] = CellType.COLONY;
+
+
+ 
 
     // scatter food 
     Random random = new Random();

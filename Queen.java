@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Queen extends Ant{
     static final int WORKER_COST = 10 ;
