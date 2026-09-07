@@ -38,7 +38,18 @@ public class Main {
     static void drawGrid(Graphics g) {
         for (int x = 0; x < WIDTH; x++){
             for (int y = 0 ; y < HEIGHT; y++){
-                //TODO: draw each cell
+                switch (grid[x][y]){
+                    case EMPTY:     g.setColor(Color.BLACK); break;
+                    case FOOD:      g.setColor(Color.YELLOW); break;
+                    case WALL:      g.setColor(Color.RED);  break;
+                    case COLONY:    g.setColor(Color.MAGENTA);  break;
+                    default:        g.setColor(Color.BLACK);    break;
+                }
+                g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                //drawing the grid lines
+                g.setColor(Color.DARK_GRAY);
+                g.drawRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
     }
  }
