@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 class Worker extends Ant{
     /*1. Worker needs to detect pheromones nearby
     2. Follow the strongest pheromone trail

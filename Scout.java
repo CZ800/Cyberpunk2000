@@ -1,3 +1,4 @@
+import java.awt.Point;
 
      class Scout extends Ant { 
         boolean pathfinding;
@@ -6,12 +7,12 @@
             super(health, stamina);
         }
 
-        public void setPathfinding(boolean pathfinding) {
-            this.isPathfinding = pathfinding;
+        public void setPathfinding(boolean pathfinding_set) {
+            this.pathfinding = pathfinding_set;
         }
 
         public boolean isPathfinding() {
-            return isPathfinding;
+            return pathfinding;
         }
 
         public void leavePheromone(Point position) {
