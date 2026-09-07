@@ -13,10 +13,12 @@ Pheromone.java -- generic class
 
 Main --- Objects + map design
 
-Map  - 2d grid with each cell state as empty , food , wall , colony ,pheromon trail or 
+Map  - 2d grid with each cell state as empty , food , wall , colony ,pheromon trail 
 
 Pheromone is a separate grid layer 
 Pheromone<Float>[][] pheromoneGrid - holds pheromone strength at each position
+
+Pheromone should decay overtime using method "decay" inside pheromone
 
 Interfaces & Abstractions for Methods n functions  as separate files 
 

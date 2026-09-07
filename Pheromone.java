@@ -14,4 +14,9 @@ public class Pheromone<T> {
     public T getStrength() { return strength; }
     public Point getPosition() { return position; }
     
+public void decay {
+    // pheromone fades over time 
+    
+}
+    
 }
