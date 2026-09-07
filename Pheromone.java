@@ -14,7 +14,7 @@ public class Pheromone<T extends Number> {
     public T getStrength() { return strength; }
     public Point getPosition() { return position; }
     
-@SuppressWarnings("Unchecked")    
+@SuppressWarnings("unchecked")    
 /*Needed as the T cast cant be fully verified at compile
  time due to type erasure*/
 
@@ -25,7 +25,7 @@ public void decay() {
     //2. Multiplies by 0.99f
     //3. Updates the strength
     // Cast the result back
-    
+
 float current = ((Number) strength).floatValue();
 float decayed = current * 0.99f;
     this.strength = (T) Float.valueOf(decayed);
