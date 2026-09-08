@@ -35,7 +35,11 @@ public class Main {
         respawnTimer++;
         if (respawnTimer >= RESPAWN_RATE){
             respawnFood();
-          respawnTimer = 0 ;
+            respawnTimer = 0 ;
+        }
+
+        for (Scout scout : scouts) {
+            scout.wander(WIDTH, HEIGHT);
         }
 
         scoutspawnTimer++;
@@ -81,6 +85,7 @@ public class Main {
 
 
     static CellType[][] grid = new CellType[WIDTH][HEIGHT];
+    @SuppressWarnings("unchecked")
     static Pheromone<Float>[][] pheromoneGrid = new Pheromone[WIDTH][HEIGHT];
 
     public static void main(String[] args) {
@@ -91,6 +96,7 @@ public class Main {
         JPanel panel = new JPanel() {
             @Override 
             protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
                 drawGrid(g);
             }
         };
@@ -103,6 +109,7 @@ public class Main {
         panel.setPreferredSize(new Dimension(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE));
         frame.add(panel);
         frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
 
         Timer timer = new Timer(100, e -> {
@@ -132,6 +139,13 @@ public class Main {
                 g.setColor(Color.DARK_GRAY);
                 g.drawRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
+
+    }
+
+    g.setColor(Color.BLUE);
+    for (Scout scout : scouts) {
+        Point p = scout.getPosition();
+        g.fillOval(p.x * CELL_SIZE + 5, p.y * CELL_SIZE + 5, CELL_SIZE - 10, CELL_SIZE - 10);
     }
  }
 
@@ -147,12 +161,15 @@ public class Main {
         }
     }
 // Spawn Queen
-      queen = new Queen(100,100);
+    queen = new Queen(100,100);
     grid[WIDTH / 2][HEIGHT / 2] = CellType.QUEEN;
 
     //place colony in the middle
    // grid[WIDTH / 2][HEIGHT / 2] = CellType.COLONY;
 
+    scouts.add(new Scout(100, 100));
+    scouts.add(new Scout(100, 100));
+    scouts.add(new Scout(100, 100));
 
  
 
@@ -170,5 +187,3 @@ public class Main {
  }
 
 }
-
-    
