@@ -12,6 +12,9 @@ public class Main {
     static final int CELL_SIZE = 30;
     static final int TOTAL_FOOD = 10;
     static int respawnTimer = 0 ;
+    static int scoutspawnTimer = 0 ;
+    static final int scoutSPAWN_RATE = 30; 
+    static final int MAX_SCOUTS = 5 ;
     static final int RESPAWN_RATE = 50;// so every 50 ticks
 
 
@@ -33,6 +36,14 @@ public class Main {
         if (respawnTimer >= RESPAWN_RATE){
             respawnFood();
           respawnTimer = 0 ;
+        }
+
+        scoutspawnTimer++;
+        if(scoutspawnTimer >= scoutSPAWN_RATE && scouts.size() < MAX_SCOUTS) {
+            Scout scout = queen.prodScout();
+            if (scout != null) {
+                scouts.add(scout);
+            }
         }
     }
 

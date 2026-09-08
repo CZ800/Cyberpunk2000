@@ -1,4 +1,5 @@
 import java.awt.Point;
+// Generic Class
 
 //bound type parameter to Number
 public class Pheromone<T extends Number> {
