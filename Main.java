@@ -16,6 +16,8 @@ public class Main {
     static final int scoutSPAWN_RATE = 30; 
     static final int MAX_SCOUTS = 2 ;
     static final int RESPAWN_RATE = 50;// so every 50 ticks
+    static int scoutMoveTimer = 0 ;
+    static final int SCOUT_MOVE_RATE = 2; // move every 3 ticks
 
 
     static Queen queen;
@@ -38,14 +40,6 @@ public class Main {
             respawnTimer = 0 ;
         }
 
-        for (Scout scout : scouts) {
-            if(scout.isPathfinding()) {
-                scout.returnToColony(WIDTH , HEIGHT);
-            } else {
-                scout.wander(WIDTH , HEIGHT);
-            }
-        }
-
         scoutspawnTimer++;
         if(scoutspawnTimer >= scoutSPAWN_RATE && scouts.size() < MAX_SCOUTS) {
             Scout scout = queen.prodScout();
@@ -54,8 +48,19 @@ public class Main {
                 scoutspawnTimer = 0;
             }
         }
+        
+        scoutMoveTimer++;
+        if (scoutMoveTimer >= SCOUT_MOVE_RATE) {
+            for (Scout scout : scouts) {
+                if (scout.isPathfinding()) {
+                    scout.returnToColony(WIDTH, HEIGHT);
+                }else {
+                    scout.wander(WIDTH, HEIGHT);
+                }
+            }
+            scoutMoveTimer = 0 ;
+        }
     }
-
 
 
     static int countFood() {
