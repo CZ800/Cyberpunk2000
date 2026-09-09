@@ -1,6 +1,10 @@
 import java.awt.Point;
 import java.util.Random;
 
+
+/* 1. Scounts should wander randomly , 2. When they find food - mark it with pheromones and return to colony
+3. Not pick up food - that's the Worker's job */
+
      class Scout extends Ant { 
         boolean pathfinding;
         private Point position;
@@ -35,17 +39,41 @@ import java.util.Random;
         int newX = position.x + dx;
         int newY = position.y + dy;
 
+
+         //Boundary check for wander 
+        // have to check that newX/newY are within the grid otherwise might cause arrayoutofbounds exception
+        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
         // new pos
         this.position.setLocation(newX, newY);
 
-        // basic collision
-        // If scout lands on FOOD, remove it
+        // Scout need to mark food location with pheromone
         if (Main.grid[newX][newY] == Main.CellType.FOOD) {
-            Main.grid[newX][newY] = Main.CellType.EMPTY;
+            Main.pheromoneGrid[newX][newY] = leavePheromone();
+            pathfinding = true; // heading back to colony
         }
-        //Boundary check for wander 
-        // have to check that newX/newY are within the grid otherwise might cause arrayoutofbounds exception
-        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
+       
+    }
+
+    public void returnToColony(int gridWidth , int gridHeight) {
+        int colonyX = Main.WIDTH / 2;
+        int colonyY = Main.HEIGHT / 2;
+
+        int dx = Integer.compare(colonyX , position.x); 
+        int dy = Integer.compare(colonyY, position.y); 
+
+        int newX = position.x + dx;
+        int newY = position.y + dy;
+
+        position.setLocation(newX, newY);
+
+        //leave pheromon t on the way back
+        Main.pheromoneGrid[newX][newY] = leavePheromone();
+
+        if (newX == colonyX && newY == colonyY) {
+            pathfinding = false;
+        }
+
+        
     }
 
     /**
