@@ -14,7 +14,7 @@ public class Main {
     static int respawnTimer = 0 ;
     static int scoutspawnTimer = 0 ;
     static final int scoutSPAWN_RATE = 30; 
-    static final int MAX_SCOUTS = 5 ;
+    static final int MAX_SCOUTS = 2 ;
     static final int RESPAWN_RATE = 50;// so every 50 ticks
 
 
@@ -39,7 +39,11 @@ public class Main {
         }
 
         for (Scout scout : scouts) {
-            scout.wander(WIDTH, HEIGHT);
+            if(scout.isPathfinding()) {
+                scout.returnToColony(WIDTH , HEIGHT);
+            } else {
+                scout.wander(WIDTH , HEIGHT);
+            }
         }
 
         scoutspawnTimer++;
@@ -47,6 +51,7 @@ public class Main {
             Scout scout = queen.prodScout();
             if (scout != null) {
                 scouts.add(scout);
+                scoutspawnTimer = 0;
             }
         }
     }
@@ -134,20 +139,30 @@ public class Main {
                     
                 }
                 g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                 g.drawRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            }
 
-                //drawing the grid lines
-                g.setColor(Color.DARK_GRAY);
-                g.drawRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+               
+                
+               
         }
 
+        g.setColor(Color.GREEN);
+            for (Scout scout : scouts) {
+        Point p = scout.getPosition();
+        g.fillOval(p.x * CELL_SIZE, p.y * CELL_SIZE, CELL_SIZE , CELL_SIZE);
     }
 
-    g.setColor(Color.BLUE);
+
+       g.setColor(Color.BLUE);
     for (Scout scout : scouts) {
         Point p = scout.getPosition();
         g.fillOval(p.x * CELL_SIZE + 5, p.y * CELL_SIZE + 5, CELL_SIZE - 10, CELL_SIZE - 10);
     }
+
  }
+ 
+ 
 
  static void initGrid () {
     // set every cell to Empty 
