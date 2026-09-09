@@ -43,6 +43,9 @@ import java.util.Random;
         if (Main.grid[newX][newY] == Main.CellType.FOOD) {
             Main.grid[newX][newY] = Main.CellType.EMPTY;
         }
+        //Boundary check for wander 
+        // have to check that newX/newY are within the grid otherwise might cause arrayoutofbounds exception
+        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
     }
 
     /**
