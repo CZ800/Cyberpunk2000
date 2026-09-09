@@ -9,7 +9,11 @@
             "name": "Main",
             "request": "launch",
             "mainClass": "Main",
+<<<<<<< HEAD
             "projectName": "Cyberpunk2000_2ece0af2"
+=======
+            "projectName": "Cyberpunk2000_a0c51c27"
+>>>>>>> 2705f01ff3f459c00b5a3fb9d4ec59352b873bb6
         },
         {
             "type": "java",
