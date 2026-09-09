@@ -1,7 +1,9 @@
-1. Add ants to the simulation - place a Queen at the colony , have her spawn Scouts / Done limited to 3 ants at a time 
-2. Move ants each tick in the timer 
-3. Have Scouts leave pheromones as they wander
+1. Scouts need to sense food location and follow the sense 
+2.
+3. Move ants each tick in the timer 
+4. Have Scouts leave pheromones as they wander
 4. Have Workers follow those pheromone trails
+5. 
 
 Consider design strategy and inheritance 
 
