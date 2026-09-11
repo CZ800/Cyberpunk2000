@@ -77,14 +77,15 @@ public class Main {
         }
 
         workerMoveTimer++;
-        if (workerMoveTimer >=WORKER_MOVE_RATE) {
+        if (workerMoveTimer >= WORKER_MOVE_RATE) {
             for (Worker worker : workers) {
                 if (worker.isPathfinding()) {
                     worker.returnToColony(WIDTH, HEIGHT);
-                }else {
-                    worker.wander(WIDTH, HEIGHT);
+                } else {
+                    worker.followTrail(WIDTH, HEIGHT);
                 }
             }
+            workerMoveTimer = 0;
         }
     }
 
