@@ -1,27 +1,44 @@
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Worker extends Ant {
     boolean followingTrail;
     boolean carryingFood;
     int foodCarried;
-    boolean pathfinding;
+
 
     List<Pheromone<Float>> trail = new ArrayList<>();
 
+    private Point position;
+
     public Worker(int health, int stamina) {
         super(health, stamina);
+        this.position = new Point(Main.WIDTH / 2, Main.HEIGHT /2);
         this.followingTrail = false;
         this.carryingFood = false;
         this.foodCarried = 0;
-        this.position = new Point(10, 10);
-        this.pathfinding = false;
+
     }
 
-    @Override
-    public Point getPosition() {
-        return position;
+    public Point getPosition() { return position;}
+
+    public void detectPheromones(int x, int y) { 
+    trail.clear() ;
+
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int nx = x+dx;
+            int ny = y+dy;
+
+            if(nx>=0    &&  nx<Main.WIDTH   &&  ny>=0   &&ny<Main.HEIGHT){
+                if(Main.pheromoneGrid[nx][ny] != null){
+                    trail.add(Main.pheromoneGrid[nx][ny]);
+                }
+            }
+        }
+    }
     }
 
     public void setFollowingTrail(boolean followingTrail) {
@@ -49,58 +66,53 @@ public class Worker extends Ant {
         this.carryingFood = true;
     }
 
-    public boolean isPathfinding() {
-        return pathfinding;
-    }
+    public void followTrail() {
+    Pheromone<Float> strongest = null;
+    int colonyX = Main.WIDTH /2 ;
+    int colonyY = Main.HEIGHT /2 ;
 
-    public void followTrail(int gridWidth, int gridHeight) {
-        Point target = findStrongestPheromone(gridWidth, gridHeight);
+    for (Pheromone<Float> p : trail) {
+        if (p.getPosition().equals(position)) continue;
 
-        if (target != null) {
-            int dx = Integer.compare(target.x, position.x);
-            int dy = Integer.compare(target.y, position.y);
 
-            int newX = position.x + dx;
-            int newY = position.y + dy;
+    double currentDist = position.distance(colonyX, colonyY);
+    double pDist = p.getPosition().distance(colonyX, colonyY);
+    if(pDist <= currentDist) continue;
 
-            if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight) {
-                position.setLocation(newX, newY);
-            }
-        }
 
-        if (Main.grid[position.x][position.y] == Main.CellType.FOOD) {
-            carryingFood = true;
-            pathfinding = true;
+    //Once worker reaches a pheromone position it should ignore that pheromone and look for the next one. We need 
+    // to find the strongest pheromone that is not at the worker's current position
+     //   if(p.getPosition().equals(position)) continue;
+
+        if (strongest == null || p.getStrength() > strongest.getStrength()) {
+            strongest = p;
         }
     }
+    
 
-    private Point findStrongestPheromone(int gridWidth, int gridHeight) {
-        Pheromone<Float> strongest = null;
-        int strongestX = position.x;
-        int strongestY = position.y;
 
-        int minX = Math.max(0, position.x - 3);
-        int maxX = Math.min(gridWidth - 1, position.x + 3);
-        int minY = Math.max(0, position.y - 3);
-        int maxY = Math.min(gridHeight - 1, position.y + 3);
+    if(strongest != null) {
+       moveTowards(strongest.getPosition()); //use the method
+       //when no pheromone trail is left nearby , workers should find another path randomly
+    } else {
+        Random random = new Random();
+        int dx = random.nextInt(3) -1;
+        int dy = random.nextInt(3) -1;
+        int newX = position.x+dx;
+        int newY = position.y+dy;
+                if(newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+                    position = new Point(newX , newY);
+                    if (Main.grid[newX][newY] == Main.CellType.FOOD) {
+                        Main.grid[newX][newY] = Main.CellType.EMPTY;
+                        Main.pheromoneGrid[newX][newY] = null;
+                        pickUpFood(1);
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                Pheromone<Float> candidate = Main.pheromoneGrid[x][y];
-                if (candidate != null && (strongest == null || candidate.getStrength() > strongest.getStrength())) {
-                    strongest = candidate;
-                    strongestX = x;
-                    strongestY = y;
+                    }
                 }
-            }
-        }
-
-        if (strongest == null) {
-            return null;
-        }
-
-        return new Point(strongestX, strongestY);
     }
+
+}
+
 
     public void returnToColony(int gridWidth, int gridHeight) {
         int colonyX = Main.WIDTH / 2;
@@ -112,10 +124,34 @@ public class Worker extends Ant {
         int newX = position.x + dx;
         int newY = position.y + dy;
 
-        position.setLocation(newX, newY);
+        position = new Point(newX, newY);
 
-        if (newX == colonyX && newY == colonyY) {
-            pathfinding = false;
-        }
+    if ( newX == colonyX && newY == colonyY) {
+        carryingFood = false;
+        foodCarried = 0;
+        System.out.println("Worker delivered food to colony!");
     }
+    }
+
+ public void moveTowards(Point target) {
+        
+        int dx = Integer.compare(target.x , position.x);
+        int dy = Integer.compare(target.y, position.y);
+        int newX = position.x + dx;
+        int newY = position.y + dy;
+        
+            if (newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+                this.position = new Point(newX, newY);
+                System.out.println("Worker moving to: " + newX +" ," + newY);
+
+                if(Main.grid[newX][newY] == Main.CellType.FOOD) {
+                    Main.grid[newX][newY] = Main.CellType.EMPTY;
+                    Main.pheromoneGrid[newX][newY] = null;
+                    pickUpFood(1);
+                    //debug line 
+                    System.out.println("Worker picked up food! carryingFood = " +carryingFood);
+                }
+            }
+    }
+    
 }
