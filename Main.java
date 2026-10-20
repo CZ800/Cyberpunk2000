@@ -1,7 +1,10 @@
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 
 
@@ -101,6 +104,12 @@ public class Main {
         }
         return count;
     }
+
+    static Map<String, Long> liveAntCountsByType() {
+        return Stream.concat(Stream.of(queen), Stream.concat(scouts.stream(), workers.stream()))
+                .filter(Ant::isAlive)
+                .collect(Collectors.groupingBy(ant -> ant.getClass().getSimpleName(), Collectors.counting()));
+    }
     
 
     static Random random = new Random() ;
@@ -137,6 +146,7 @@ public class Main {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 drawGrid(g);
+                drawPopulationSummary(g);
             }
         };
 
@@ -145,7 +155,7 @@ public class Main {
 
     
 
-        panel.setPreferredSize(new Dimension(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE));
+        panel.setPreferredSize(new Dimension(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE + 24));
         frame.add(panel);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -203,6 +213,20 @@ public class Main {
 
  }
  
+ static void drawPopulationSummary(Graphics g) {
+    Map<String, Long> counts = liveAntCountsByType();
+    int summaryY = HEIGHT * CELL_SIZE;
+
+    g.setColor(Color.WHITE);
+    g.fillRect(0, summaryY, WIDTH * CELL_SIZE, 24);
+    g.setColor(Color.BLACK);
+    g.drawString(
+            "Queens: " + counts.getOrDefault("Queen", 0L)
+                    + " | Scouts: " + counts.getOrDefault("Scout", 0L)
+                    + " | Workers: " + counts.getOrDefault("Worker", 0L),
+            8, summaryY + 17);
+ }
+
  
 
  static void initGrid () {
