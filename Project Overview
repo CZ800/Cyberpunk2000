@@ -50,4 +50,10 @@ gather resources
 Inherited variable : Health , Stamina , Bool Alive
 
 
-We should use some generics in the project 
+We should use some generics in the project
+
+Parallelism and concurrency notes
+
+Population summaries use a parallel stream to count living ants by type. The UI thread first snapshots each living ant's type name, then parallel workers aggregate only those immutable strings. This avoids reading mutable ant fields or the live population lists from parallel workers. The population is currently small, so parallel-stream overhead may outweigh the work saved; this is a parallel implementation opportunity, not a guaranteed speedup.
+
+Simulation updates and painting currently both run on Swing's event-dispatch thread, so they do not execute concurrently. Parallelizing ant movement would introduce races: scouts and workers share and mutate the grid and pheromone grid, workers can compete to collect the same food, and population lists can be changed while another task iterates them. Moving simulation updates off the event-dispatch thread would also allow painting to observe partially updated positions or grid cells. Any such change needs a deliberate synchronization or immutable world-snapshot strategy; those shared-state accesses are not synchronized today.

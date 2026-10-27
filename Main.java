@@ -106,9 +106,13 @@ public class Main {
     }
 
     static Map<String, Long> liveAntCountsByType() {
-        return Stream.concat(Stream.of(queen), Stream.concat(scouts.stream(), workers.stream()))
+        List<String> livingAntTypes = Stream.concat(Stream.of(queen), Stream.concat(scouts.stream(), workers.stream()))
                 .filter(Ant::isAlive)
-                .collect(Collectors.groupingBy(ant -> ant.getClass().getSimpleName(), Collectors.counting()));
+                .map(ant -> ant.getClass().getSimpleName())
+                .collect(Collectors.toList());
+
+        return livingAntTypes.parallelStream()
+                .collect(Collectors.groupingBy(type -> type, Collectors.counting()));
     }
     
 
