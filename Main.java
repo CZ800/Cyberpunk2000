@@ -200,34 +200,49 @@ public class Main {
         }
 
         for (Worker worker : workers) {
-            drawAnt(g, worker, Color.RED, Color.RED);
+            drawAnt(g, worker, Color.BLUE, Color.BLUE);
         }
 
- }
-
- static void drawAnt(Graphics g, Ant ant, Color bodyColor, Color centerColor) {
-    Point position = ant.getPosition();
-    int cellX = position.x * CELL_SIZE;
-    int cellY = position.y * CELL_SIZE;
-    int centerX = cellX + 10;
-    Point direction = ant.getFacingDirection();
-    double angle = Math.atan2(direction.y, direction.x);
-    Graphics2D antGraphics = (Graphics2D) g.create();
-    antGraphics.rotate(angle, cellX + CELL_SIZE / 2.0, cellY + CELL_SIZE / 2.0);
-
-    antGraphics.setColor(bodyColor);
-    for (int legX : new int[] {centerX, centerX + 3, centerX + 6}) {
-        antGraphics.fillRect(legX, cellY + 7, 2, 4);
-        antGraphics.fillRect(legX, cellY + 19, 2, 4);
     }
 
-    antGraphics.fillRect(cellX + 1, cellY + 10, 9, 9);
-    antGraphics.setColor(centerColor);
-    antGraphics.fillRect(centerX, cellY + 11, 8, 8);
-    antGraphics.setColor(bodyColor);
-    antGraphics.fillRect(cellX + 18, cellY + 10, 10, 10);
-    antGraphics.dispose();
- }
+    static void drawAnt(Graphics g, Ant ant, Color bodyColor, Color centerColor) {
+        Point position = ant.getPosition();
+        int cellX = position.x * CELL_SIZE;
+        int cellY = position.y * CELL_SIZE;
+        Graphics2D antGraphics = (Graphics2D) g.create();
+        antGraphics.translate(cellX + CELL_SIZE / 2.0, cellY + CELL_SIZE / 2.0);
+        Point direction = ant.getFacingDirection();
+        antGraphics.rotate(Math.atan2(direction.y, direction.x));
+
+        antGraphics.setColor(bodyColor.darker());
+        drawAntLeg(antGraphics, -1, -3, -45, true);
+        drawAntLeg(antGraphics, 0, -3, 0, true);
+        drawAntLeg(antGraphics, 1, -3, 45, true);
+        drawAntLeg(antGraphics, -1, 2, 45, false);
+        drawAntLeg(antGraphics, 0, 2, 0, false);
+        drawAntLeg(antGraphics, 1, 2, -45, false);
+
+        antGraphics.setColor(bodyColor);
+        antGraphics.fillRect(-12, -4, 10, 7);
+        antGraphics.setColor(centerColor);
+        antGraphics.fillRect(-2, -3, 5, 5);
+        antGraphics.setColor(bodyColor);
+        antGraphics.fillRect(3, -4, 7, 7);
+
+        antGraphics.setColor(bodyColor.darker());
+        antGraphics.drawRect(-12, -4, 9, 6);
+        antGraphics.drawRect(-2, -3, 4, 4);
+        antGraphics.drawRect(3, -4, 6, 6);
+        antGraphics.dispose();
+    }
+
+    static void drawAntLeg(Graphics2D g, int anchorX, int anchorY, double angle, boolean aboveBody) {
+        Graphics2D legGraphics = (Graphics2D) g.create();
+        legGraphics.translate(anchorX, anchorY);
+        legGraphics.rotate(Math.toRadians(angle));
+        legGraphics.fillRect(-1, aboveBody ? -6 : 0, 2, 6);
+        legGraphics.dispose();
+    }
  
  static void drawPopulationSummary(Graphics g) {
     Map<String, Long> counts = liveAntCountsByType();

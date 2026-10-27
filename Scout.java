@@ -44,9 +44,8 @@ import java.util.Random;
         // have to check that newX/newY are within the grid otherwise might cause arrayoutofbounds exception
         if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
         // new pos
-        Point previousPosition = new Point(position);
+        updateFacingDirection(position, new Point(newX, newY));
         this.position.setLocation(newX, newY);
-        updateFacingDirection(previousPosition, position);
 
         // Scout need to mark food location with pheromone
         if (Main.grid[newX][newY] == Main.CellType.FOOD) {
@@ -66,9 +65,8 @@ import java.util.Random;
         int newX = position.x + dx;
         int newY = position.y + dy;
 
-        Point previousPosition = new Point(position);
+        updateFacingDirection(position, new Point(newX, newY));
         position.setLocation(newX, newY);
-        updateFacingDirection(previousPosition, position);
 
         //leave pheromon t on the way back
         Main.pheromoneGrid[newX][newY] = leavePheromone();

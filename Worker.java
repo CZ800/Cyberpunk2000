@@ -100,12 +100,12 @@ public class Worker extends Ant {
         int dy = random.nextInt(3) -1;
         int newX = position.x+dx;
         int newY = position.y+dy;
-                if(newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+        if(newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
             Point previousPosition = new Point(position);
             position = new Point(newX , newY);
             updateFacingDirection(previousPosition, position);
             if (Main.grid[newX][newY] == Main.CellType.FOOD) {
-                        Main.grid[newX][newY] = Main.CellType.EMPTY;
+                Main.grid[newX][newY] = Main.CellType.EMPTY;
                         Main.pheromoneGrid[newX][newY] = null;
                         pickUpFood(1);
 
@@ -115,6 +115,9 @@ public class Worker extends Ant {
 
 }
 
+    public void returnToColony() {
+        returnToColony(Main.WIDTH, Main.HEIGHT);
+    }
 
     public void returnToColony(int gridWidth, int gridHeight) {
         int colonyX = Main.WIDTH / 2;
