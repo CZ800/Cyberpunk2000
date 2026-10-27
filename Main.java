@@ -195,26 +195,38 @@ public class Main {
                
         }
 
-        g.setColor(Color.GREEN);
-            for (Scout scout : scouts) {
-        Point p = scout.getPosition();
-        g.fillOval(p.x * CELL_SIZE, p.y * CELL_SIZE, CELL_SIZE , CELL_SIZE);
+        for (Scout scout : scouts) {
+            drawAnt(g, scout, Color.GREEN, Color.BLUE);
+        }
+
+        for (Worker worker : workers) {
+            drawAnt(g, worker, Color.RED, Color.RED);
+        }
+
+ }
+
+ static void drawAnt(Graphics g, Ant ant, Color bodyColor, Color centerColor) {
+    Point position = ant.getPosition();
+    int cellX = position.x * CELL_SIZE;
+    int cellY = position.y * CELL_SIZE;
+    int centerX = cellX + 10;
+    Point direction = ant.getFacingDirection();
+    double angle = Math.atan2(direction.y, direction.x);
+    Graphics2D antGraphics = (Graphics2D) g.create();
+    antGraphics.rotate(angle, cellX + CELL_SIZE / 2.0, cellY + CELL_SIZE / 2.0);
+
+    antGraphics.setColor(bodyColor);
+    for (int legX : new int[] {centerX, centerX + 3, centerX + 6}) {
+        antGraphics.fillRect(legX, cellY + 7, 2, 4);
+        antGraphics.fillRect(legX, cellY + 19, 2, 4);
     }
 
-
-       g.setColor(Color.BLUE);
-    for (Scout scout : scouts) {
-        Point p = scout.getPosition();
-        g.fillOval(p.x * CELL_SIZE + 5, p.y * CELL_SIZE + 5, CELL_SIZE - 10, CELL_SIZE - 10);
-    }
-
-            g.setColor(Color.RED);
-            for (Worker worker : workers) {
-        Point o = worker.getPosition();
-        g.fillOval(o.x * CELL_SIZE, o.y * CELL_SIZE, CELL_SIZE , CELL_SIZE);
-    }
-
-
+    antGraphics.fillRect(cellX + 1, cellY + 10, 9, 9);
+    antGraphics.setColor(centerColor);
+    antGraphics.fillRect(centerX, cellY + 11, 8, 8);
+    antGraphics.setColor(bodyColor);
+    antGraphics.fillRect(cellX + 18, cellY + 10, 10, 10);
+    antGraphics.dispose();
  }
  
  static void drawPopulationSummary(Graphics g) {

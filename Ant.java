@@ -6,6 +6,8 @@ public class Ant implements AntBehaviour {
          int stamina;
         boolean alive ;
         Point position;
+         private int facingX = 1;
+         private int facingY;
         // static final cost ;
 
         //constructor 
@@ -23,6 +25,15 @@ public class Ant implements AntBehaviour {
         public boolean isAlive() { return alive;}
         public void move(Point destination) { this.position = destination;}
         public Point getPosition() { return position;}
+        public Point getFacingDirection() { return new Point(facingX, facingY); }
+        protected void updateFacingDirection(Point previousPosition, Point newPosition) {
+                int dx = Integer.compare(newPosition.x, previousPosition.x);
+                int dy = Integer.compare(newPosition.y, previousPosition.y);
+                if (dx != 0 || dy != 0) {
+                        facingX = dx;
+                        facingY = dy;
+                }
+        }
         public void takeDamage(int amount) {
                 this.health -= amount;
                 if(this.health <= 0) die();
@@ -31,4 +42,3 @@ public class Ant implements AntBehaviour {
 
 
 }
-
