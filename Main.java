@@ -13,6 +13,7 @@ public class Main {
     static final int WIDTH = 20;
     static final int HEIGHT = 20;
     static final int CELL_SIZE = 30;
+    static final Color BACKGROUND_COLOR = new Color(0x24, 0x91, 0x2c);
     static final int TOTAL_FOOD = 10;
     static int respawnTimer = 0 ;
     static int scoutspawnTimer = 0 ;
@@ -154,7 +155,7 @@ public class Main {
             }
         };
 
-        
+        panel.setBackground(BACKGROUND_COLOR);
 
 
     
@@ -177,17 +178,28 @@ public class Main {
     static void drawGrid(Graphics g) {
         for (int x = 0; x < WIDTH; x++){
             for (int y = 0 ; y < HEIGHT; y++){
-                switch (grid[x][y]){
-                    case EMPTY:     g.setColor(Color.BLACK); break;
-                    case FOOD:      g.setColor(Color.YELLOW); break;
-                    case WALL:      g.setColor(Color.RED);  break;
-                    //case COLONY:    g.setColor(Color.MAGENTA);  break;
-                    case QUEEN:     g.setColor(Color.PINK); break;
-                    default:        g.setColor(Color.BLACK);    break;
-                    
+                CellType cell = grid[x][y];
+                Color cellColor;
+                switch (cell){
+                    case EMPTY:     cellColor = BACKGROUND_COLOR; break;
+                    case FOOD:      cellColor = BACKGROUND_COLOR; break;
+                    case WALL:      cellColor = Color.RED;  break;
+                    //case COLONY:    cellColor = Color.MAGENTA;  break;
+                    case QUEEN:     cellColor = Color.PINK; break;
+                    default:        cellColor = BACKGROUND_COLOR;    break;
                 }
-                g.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                 g.drawRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                int cellX = x * CELL_SIZE;
+                int cellY = y * CELL_SIZE;
+                g.setColor(cellColor);
+                g.fillRect(cellX, cellY, CELL_SIZE, CELL_SIZE);
+                g.drawRect(cellX, cellY, CELL_SIZE, CELL_SIZE);
+                if (cell == CellType.FOOD) {
+                    int foodSize = 12;
+                    g.setColor(Color.YELLOW);
+                    g.fillOval(cellX + (CELL_SIZE - foodSize) / 2,
+                            cellY + (CELL_SIZE - foodSize) / 2, foodSize, foodSize);
+                }
             }
 
                
@@ -196,13 +208,31 @@ public class Main {
         }
 
         for (Scout scout : scouts) {
-            drawAnt(g, scout, Color.GREEN, Color.BLUE);
+            drawAnt(g, scout, Color.RED, Color.RED);
         }
 
         for (Worker worker : workers) {
-            drawAnt(g, worker, Color.BLUE, Color.BLUE);
+            drawAnt(g, worker, Color.BLACK, Color.BLACK);
+            if (worker.isCarryingFood()) {
+                drawCarriedFood(g, worker);
+            }
         }
 
+    }
+
+    static void drawCarriedFood(Graphics g, Worker worker) {
+        Point position = worker.getPosition();
+        Graphics2D foodGraphics = (Graphics2D) g.create();
+        foodGraphics.translate(
+                position.x * CELL_SIZE + CELL_SIZE / 2.0,
+                position.y * CELL_SIZE + CELL_SIZE / 2.0);
+        Point direction = worker.getFacingDirection();
+        foodGraphics.rotate(Math.atan2(direction.y, direction.x));
+        foodGraphics.setColor(Color.YELLOW);
+        foodGraphics.fillOval(7, -9, 9, 9);
+        foodGraphics.setColor(Color.ORANGE);
+        foodGraphics.drawOval(7, -9, 9, 9);
+        foodGraphics.dispose();
     }
 
     static void drawAnt(Graphics g, Ant ant, Color bodyColor, Color centerColor) {
