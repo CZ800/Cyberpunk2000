@@ -43,6 +43,7 @@ import java.util.Random;
          //Boundary check for wander 
         // have to check that newX/newY are within the grid otherwise might cause arrayoutofbounds exception
         if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
+        if (Main.grid[newX][newY] == Main.CellType.WALL) return;
         // new pos
         updateFacingDirection(position, new Point(newX, newY));
         this.position.setLocation(newX, newY);
@@ -64,6 +65,9 @@ import java.util.Random;
 
         int newX = position.x + dx;
         int newY = position.y + dy;
+
+        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
+        if (Main.grid[newX][newY] == Main.CellType.WALL) return;
 
         updateFacingDirection(position, new Point(newX, newY));
         position.setLocation(newX, newY);

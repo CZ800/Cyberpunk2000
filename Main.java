@@ -15,6 +15,8 @@ public class Main {
     static final int CELL_SIZE = 30;
     static final Color BACKGROUND_COLOR = new Color(0x24, 0x91, 0x2c);
     static final int TOTAL_FOOD = 10;
+    static final int TOTAL_ROCKS = 5;
+    static final int ROCK_SIZE = 3;
     static int respawnTimer = 0 ;
     static int scoutspawnTimer = 0 ;
     static final int scoutSPAWN_RATE = 30; 
@@ -183,7 +185,7 @@ public class Main {
                 switch (cell){
                     case EMPTY:     cellColor = BACKGROUND_COLOR; break;
                     case FOOD:      cellColor = BACKGROUND_COLOR; break;
-                    case WALL:      cellColor = Color.RED;  break;
+                    case WALL:      cellColor = Color.GRAY; break;
                     //case COLONY:    cellColor = Color.MAGENTA;  break;
                     case QUEEN:     cellColor = Color.PINK; break;
                     default:        cellColor = BACKGROUND_COLOR;    break;
@@ -305,6 +307,8 @@ public class Main {
     queen = new Queen(100,100);
     grid[WIDTH / 2][HEIGHT / 2] = CellType.QUEEN;
 
+    placeRocks();
+
     //place colony in the middle
    // grid[WIDTH / 2][HEIGHT / 2] = CellType.COLONY;
 
@@ -318,16 +322,50 @@ public class Main {
  
 
     // scatter food 
-    Random random = new Random();
     int foodPlaced = 0;
     while (foodPlaced < 10){
-        int x = random.nextInt(WIDTH);
-        int y = random.nextInt(HEIGHT);
+        int x = Main.random.nextInt(WIDTH);
+        int y = Main.random.nextInt(HEIGHT);
         if (grid[x][y] == CellType.EMPTY) {
             grid[x][y] = CellType.FOOD;
             foodPlaced++;
         }
     }
+ }
+
+ static void placeRocks() {
+    List<Point> candidates = new ArrayList<>();
+    for (int x = 0; x <= WIDTH - ROCK_SIZE; x++) {
+        for (int y = 0; y <= HEIGHT - ROCK_SIZE; y++) {
+            candidates.add(new Point(x, y));
+        }
+    }
+    java.util.Collections.shuffle(candidates, random);
+
+    int rocksPlaced = 0;
+    for (Point candidate : candidates) {
+        boolean areaAvailable = true;
+        for (int x = candidate.x; x < candidate.x + ROCK_SIZE && areaAvailable; x++) {
+            for (int y = candidate.y; y < candidate.y + ROCK_SIZE; y++) {
+                if (grid[x][y] != CellType.EMPTY) {
+                    areaAvailable = false;
+                    break;
+                }
+            }
+        }
+
+        if (!areaAvailable) continue;
+
+        for (int x = candidate.x; x < candidate.x + ROCK_SIZE; x++) {
+            for (int y = candidate.y; y < candidate.y + ROCK_SIZE; y++) {
+                grid[x][y] = CellType.WALL;
+            }
+        }
+        rocksPlaced++;
+        if (rocksPlaced == TOTAL_ROCKS) return;
+    }
+
+    throw new IllegalStateException("Unable to place all rocks on the map.");
  }
 
 }

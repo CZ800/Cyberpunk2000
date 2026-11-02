@@ -13,7 +13,7 @@ Main - entry point
 
 
 Simulation should draw on a JPanel inside the JFrame , redrawn 10 times per second
-Map  - 2d grid with each cell state as empty , food , wall , colony ,pheromon trail 
+Map  - 2d grid with each cell state as empty , food , wall , colony ,pheromon trail . Five randomly placed rocks occupy 3 by 3 cells each.
 
 Main --- Objects + map design
 

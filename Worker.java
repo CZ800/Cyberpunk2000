@@ -100,7 +100,8 @@ public class Worker extends Ant {
         int dy = random.nextInt(3) -1;
         int newX = position.x+dx;
         int newY = position.y+dy;
-        if(newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+        if(newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT
+                && Main.grid[newX][newY] != Main.CellType.WALL) {
             Point previousPosition = new Point(position);
             position = new Point(newX , newY);
             updateFacingDirection(previousPosition, position);
@@ -129,6 +130,11 @@ public class Worker extends Ant {
         int newX = position.x + dx;
         int newY = position.y + dy;
 
+        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight
+                || Main.grid[newX][newY] == Main.CellType.WALL) {
+            return;
+        }
+
         Point previousPosition = new Point(position);
         position = new Point(newX, newY);
         updateFacingDirection(previousPosition, position);
@@ -147,7 +153,8 @@ public class Worker extends Ant {
         int newX = position.x + dx;
         int newY = position.y + dy;
         
-            if (newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+            if (newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT
+                    && Main.grid[newX][newY] != Main.CellType.WALL) {
             Point previousPosition = new Point(position);
             this.position = new Point(newX, newY);
             updateFacingDirection(previousPosition, position);
