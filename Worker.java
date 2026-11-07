@@ -100,16 +100,21 @@ public class Worker extends Ant {
         int dy = random.nextInt(3) -1;
         int newX = position.x+dx;
         int newY = position.y+dy;
-        if(newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT
-                && Main.grid[newX][newY] != Main.CellType.WALL) {
-            Point previousPosition = new Point(position);
-            position = new Point(newX , newY);
-            updateFacingDirection(previousPosition, position);
-            if (Main.grid[newX][newY] == Main.CellType.FOOD) {
-                Main.grid[newX][newY] = Main.CellType.EMPTY;
-                        Main.pheromoneGrid[newX][newY] = null;
+                Point nextPosition = null;
+                if (newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+                    nextPosition = new Point(newX, newY);
+                    if (Main.grid[newX][newY] == Main.CellType.WALL) {
+                        nextPosition = findRandomOpenNeighbor(position, Main.WIDTH, Main.HEIGHT, random);
+                    }
+                }
+                if (nextPosition != null) {
+                    Point previousPosition = new Point(position);
+                    position = nextPosition;
+                    updateFacingDirection(previousPosition, position);
+                    if (Main.grid[position.x][position.y] == Main.CellType.FOOD) {
+                        Main.grid[position.x][position.y] = Main.CellType.EMPTY;
+                        Main.pheromoneGrid[position.x][position.y] = null;
                         pickUpFood(1);
-
                     }
                 }
     }
@@ -124,19 +129,12 @@ public class Worker extends Ant {
         int colonyX = Main.WIDTH / 2;
         int colonyY = Main.HEIGHT / 2;
 
-        int dx = Integer.compare(colonyX, position.x);
-        int dy = Integer.compare(colonyY, position.y);
-
-        int newX = position.x + dx;
-        int newY = position.y + dy;
-
-        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight
-                || Main.grid[newX][newY] == Main.CellType.WALL) {
-            return;
-        }
-
+        Point nextPosition = findPathStep(position, new Point(colonyX, colonyY), gridWidth, gridHeight);
+        if (nextPosition == null) return;
         Point previousPosition = new Point(position);
-        position = new Point(newX, newY);
+        position = nextPosition;
+        int newX = nextPosition.x;
+        int newY = nextPosition.y;
         updateFacingDirection(previousPosition, position);
 
     if ( newX == colonyX && newY == colonyY) {
@@ -147,27 +145,20 @@ public class Worker extends Ant {
     }
 
  public void moveTowards(Point target) {
-        
-        int dx = Integer.compare(target.x , position.x);
-        int dy = Integer.compare(target.y, position.y);
-        int newX = position.x + dx;
-        int newY = position.y + dy;
-        
-            if (newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT
-                    && Main.grid[newX][newY] != Main.CellType.WALL) {
-            Point previousPosition = new Point(position);
-            this.position = new Point(newX, newY);
-            updateFacingDirection(previousPosition, position);
-            System.out.println("Worker moving to: " + newX +" ," + newY);
+     Point nextPosition = findPathStep(position, target, Main.WIDTH, Main.HEIGHT);
+     if (nextPosition == null) return;
 
-                if(Main.grid[newX][newY] == Main.CellType.FOOD) {
-                    Main.grid[newX][newY] = Main.CellType.EMPTY;
-                    Main.pheromoneGrid[newX][newY] = null;
-                    pickUpFood(1);
-                    //debug line 
-                    System.out.println("Worker picked up food! carryingFood = " +carryingFood);
-                }
-            }
-    }
+     Point previousPosition = new Point(position);
+     position = nextPosition;
+     updateFacingDirection(previousPosition, position);
+     System.out.println("Worker moving to: " + position.x + " ," + position.y);
+
+     if (Main.grid[position.x][position.y] == Main.CellType.FOOD) {
+         Main.grid[position.x][position.y] = Main.CellType.EMPTY;
+         Main.pheromoneGrid[position.x][position.y] = null;
+         pickUpFood(1);
+         System.out.println("Worker picked up food! carryingFood = " + carryingFood);
+     }
+ }
     
 }

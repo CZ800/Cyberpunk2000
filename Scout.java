@@ -43,7 +43,12 @@ import java.util.Random;
          //Boundary check for wander 
         // have to check that newX/newY are within the grid otherwise might cause arrayoutofbounds exception
         if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
-        if (Main.grid[newX][newY] == Main.CellType.WALL) return;
+        if (Main.grid[newX][newY] == Main.CellType.WALL) {
+            Point alternativeStep = findRandomOpenNeighbor(position, gridWidth, gridHeight, random);
+            if (alternativeStep == null) return;
+            newX = alternativeStep.x;
+            newY = alternativeStep.y;
+        }
         // new pos
         updateFacingDirection(position, new Point(newX, newY));
         this.position.setLocation(newX, newY);
@@ -60,14 +65,10 @@ import java.util.Random;
         int colonyX = Main.WIDTH / 2;
         int colonyY = Main.HEIGHT / 2;
 
-        int dx = Integer.compare(colonyX , position.x); 
-        int dy = Integer.compare(colonyY, position.y); 
-
-        int newX = position.x + dx;
-        int newY = position.y + dy;
-
-        if (newX < 0 || newX >= gridWidth || newY < 0 || newY >= gridHeight) return;
-        if (Main.grid[newX][newY] == Main.CellType.WALL) return;
+        Point nextPosition = findPathStep(position, new Point(colonyX, colonyY), gridWidth, gridHeight);
+        if (nextPosition == null) return;
+        int newX = nextPosition.x;
+        int newY = nextPosition.y;
 
         updateFacingDirection(position, new Point(newX, newY));
         position.setLocation(newX, newY);
