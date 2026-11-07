@@ -138,10 +138,14 @@ public class Worker extends Ant {
         updateFacingDirection(previousPosition, position);
 
     if ( newX == colonyX && newY == colonyY) {
+        deliverFood();
+    }
+    }
+
+    public void deliverFood() {
         carryingFood = false;
         foodCarried = 0;
         System.out.println("Worker delivered food to colony!");
-    }
     }
 
  public void moveTowards(Point target) {
