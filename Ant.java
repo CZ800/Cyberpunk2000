@@ -10,7 +10,7 @@ public class Ant implements AntBehaviour {
          int health;
          int stamina;
          boolean alive ;
-         Point position;
+         protected Point position;
          private int facingX = 1;
          private int facingY;
         // static final cost ;

@@ -7,23 +7,14 @@ public class ReturnToColonyStrategy implements MovementStrategy {
     @Override
 
     public void move(Worker worker) {
-        Point position = worker.getPosition();
-        int colonyX = Main.WIDTH/2;
-        int colonyY = Main.HEIGHT /2 ;
-        int newX = position.x + Integer.compare(colonyX , position.x);
-        int newY = position.y + Integer.compare(colonyY, position.y);
-        worker.move(new Point(newX, newY));
+        Point previousPosition = new Point(worker.getPosition());
+        worker.returnToColony(Main.WIDTH, Main.HEIGHT);
+        Point newPosition = worker.getPosition();
 
-        if (Main.pheromoneGrid[newX][newY] != null) {
-            Main.pheromoneGrid[newX][newY].reinforce(REINFORCE_AMOUNT);
-                System.out.println("Reinforced trail at " + newX + ", "+ newY);
-        }
-                if (newX == colonyX && newY == colonyY) {
-                 worker.deliverFood();
-                }
+        if (!newPosition.equals(previousPosition)
+                && Main.pheromoneGrid[newPosition.x][newPosition.y] != null) {
+            Main.pheromoneGrid[newPosition.x][newPosition.y].reinforce(REINFORCE_AMOUNT);
+            System.out.println("Reinforced trail at " + newPosition.x + ", " + newPosition.y);
         }
     }
-
-
-
-
+}
