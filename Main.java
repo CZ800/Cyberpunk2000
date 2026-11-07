@@ -35,6 +35,10 @@ public class Main {
     static Queen queen;
     static List<Scout> scouts = new ArrayList<>();
     static List<Worker> workers = new ArrayList<>();
+    static int foodDeliveryCount;
+    private static final MovementStrategy FOLLOW_TRAIL_STRATEGY = new FollowTrailStrategy();
+    private static final MovementStrategy RETURN_TO_COLONY_STRATEGY = new ReturnToColonyStrategy();
+    private static final FoodDeliveryListener FOOD_DELIVERY_COUNTER = worker -> foodDeliveryCount++;
 
 
 
@@ -77,6 +81,7 @@ public class Main {
         if(workerspawnTimer >= workerSPAWN_RATE && workers.size() < MAX_WORKERS) {
             Worker worker = queen.prodWorker();
             if (worker != null) {
+                registerFoodDeliveryObserver(worker);
                 workers.add(worker);
                 workerspawnTimer = 0;
             }
@@ -85,13 +90,10 @@ public class Main {
         workerMoveTimer++;
         if (workerMoveTimer >= WORKER_MOVE_RATE) {
             for (Worker worker : workers) {
-                if (worker.isCarryingFood()) {
-                    worker.returnToColony(WIDTH, HEIGHT);
-                } else {
-                Point p = worker.getPosition();
-                worker.detectPheromones(p.x, p.y);
-                worker.followTrail();
-                }
+                worker.setMovementStrategy(worker.isCarryingFood()
+                        ? RETURN_TO_COLONY_STRATEGY
+                        : FOLLOW_TRAIL_STRATEGY);
+                worker.performMovement();
             }
             workerMoveTimer = 0;
         }
@@ -286,7 +288,8 @@ public class Main {
     g.drawString(
             "Queens: " + counts.getOrDefault("Queen", 0L)
                     + " | Scouts: " + counts.getOrDefault("Scout", 0L)
-                    + " | Workers: " + counts.getOrDefault("Worker", 0L),
+                    + " | Workers: " + counts.getOrDefault("Worker", 0L)
+                    + " | Deliveries: " + foodDeliveryCount,
             8, summaryY + 17);
  }
 
@@ -316,8 +319,13 @@ public class Main {
     scouts.add(new Scout(100, 100));
     scouts.add(new Scout(100, 100));
 
-    workers.add(new Worker(100, 100));
-    workers.add(new Worker(100, 100));
+    Worker firstWorker = new Worker(100, 100);
+    registerFoodDeliveryObserver(firstWorker);
+    workers.add(firstWorker);
+
+    Worker secondWorker = new Worker(100, 100);
+    registerFoodDeliveryObserver(secondWorker);
+    workers.add(secondWorker);
 
  
 
@@ -331,6 +339,10 @@ public class Main {
             foodPlaced++;
         }
     }
+ }
+
+ static void registerFoodDeliveryObserver(Worker worker) {
+    worker.addFoodDeliveryListener(FOOD_DELIVERY_COUNTER);
  }
 
  static void placeRocks() {
