@@ -8,9 +8,10 @@ public class Worker extends Ant {
     boolean carryingFood;
     int foodCarried;
 
+
     List<Pheromone<Float>> trail = new ArrayList<>();
 
-    private final Random random = new Random();
+    private Point position;
 
     public Worker(int health, int stamina) {
         super(health, stamina);
@@ -94,20 +95,31 @@ public class Worker extends Ant {
        moveTowards(strongest.getPosition()); //use the method
        //when no pheromone trail is left nearby , workers should find another path randomly
     } else {
-        moveRandomly();
+        Random random = new Random();
+        int dx = random.nextInt(3) -1;
+        int dy = random.nextInt(3) -1;
+        int newX = position.x+dx;
+        int newY = position.y+dy;
+                Point nextPosition = null;
+                if (newX >= 0 && newX < Main.WIDTH && newY >= 0 && newY < Main.HEIGHT) {
+                    nextPosition = new Point(newX, newY);
+                    if (Main.grid[newX][newY] == Main.CellType.WALL) {
+                        nextPosition = findRandomOpenNeighbor(position, Main.WIDTH, Main.HEIGHT, random);
+                    }
+                }
+                if (nextPosition != null) {
+                    Point previousPosition = new Point(position);
+                    position = nextPosition;
+                    updateFacingDirection(previousPosition, position);
+                    if (Main.grid[position.x][position.y] == Main.CellType.FOOD) {
+                        Main.grid[position.x][position.y] = Main.CellType.EMPTY;
+                        Main.pheromoneGrid[position.x][position.y] = null;
+                        pickUpFood(1);
+                    }
+                }
     }
 
 }
-
-    public void moveRandomly() {
-        Point nextPosition = findRandomOpenNeighbor(position, Main.WIDTH, Main.HEIGHT, random);
-        if (nextPosition == null) return;
-
-        Point previousPosition = new Point(position);
-        position = nextPosition;
-        updateFacingDirection(previousPosition, position);
-        collectFoodAtCurrentPosition();
-    }
 
     public void returnToColony() {
         returnToColony(Main.WIDTH, Main.HEIGHT);
@@ -125,34 +137,28 @@ public class Worker extends Ant {
         int newY = nextPosition.y;
         updateFacingDirection(previousPosition, position);
 
-        if (newX == colonyX && newY == colonyY) deliverFood();
-    }
-
-    public void moveTowards(Point target) {
-        Point nextPosition = findPathStep(position, target, Main.WIDTH, Main.HEIGHT);
-        if (nextPosition == null) return;
-
-        Point previousPosition = new Point(position);
-        position = nextPosition;
-        updateFacingDirection(previousPosition, position);
-        System.out.println("Worker moving to: " + position.x + " ," + position.y);
-
-        collectFoodAtCurrentPosition();
-    }
-
-    public void deliverFood() {
+    if ( newX == colonyX && newY == colonyY) {
         carryingFood = false;
         foodCarried = 0;
         System.out.println("Worker delivered food to colony!");
     }
-
-    private void collectFoodAtCurrentPosition() {
-        if (Main.grid[position.x][position.y] == Main.CellType.FOOD) {
-            Main.grid[position.x][position.y] = Main.CellType.EMPTY;
-            Main.pheromoneGrid[position.x][position.y] = null;
-            pickUpFood(1);
-            System.out.println("Worker picked up food! carryingFood = " + carryingFood);
-        }
     }
+
+ public void moveTowards(Point target) {
+     Point nextPosition = findPathStep(position, target, Main.WIDTH, Main.HEIGHT);
+     if (nextPosition == null) return;
+
+     Point previousPosition = new Point(position);
+     position = nextPosition;
+     updateFacingDirection(previousPosition, position);
+     System.out.println("Worker moving to: " + position.x + " ," + position.y);
+
+     if (Main.grid[position.x][position.y] == Main.CellType.FOOD) {
+         Main.grid[position.x][position.y] = Main.CellType.EMPTY;
+         Main.pheromoneGrid[position.x][position.y] = null;
+         pickUpFood(1);
+         System.out.println("Worker picked up food! carryingFood = " + carryingFood);
+     }
+ }
     
 }

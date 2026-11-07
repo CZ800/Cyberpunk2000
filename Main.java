@@ -141,7 +141,7 @@ public class Main {
 
     static CellType[][] grid = new CellType[WIDTH][HEIGHT];
     @SuppressWarnings("unchecked")
-    static Pheromone<Float>[][] pheromoneGrid = (Pheromone<Float>[][]) new Pheromone<?>[WIDTH][HEIGHT];
+    static Pheromone<Float>[][] pheromoneGrid = new Pheromone[WIDTH][HEIGHT];
 
     public static void main(String[] args) {
         
